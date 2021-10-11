@@ -1,8 +1,23 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
 import os
 import subprocess
 import pymatgen as pmg
 import numpy as np
-dir = '/lustre/athall/LLZO/cubic/Ta/bulk_mod/Li_then_Ta'
+
+
+# In[6]:
+
+
+dir = '/Users/ath/umd_projects/LLZO/cubic/Ta/408/unstressed/Li_trials'
+
+
+# In[29]:
+
 
 energies = []
 
@@ -14,13 +29,58 @@ for dirname in next(os.walk('.'))[1]:
 ### Saves the toten from vasprun ###
     run = pmg.io.vasp.Vasprun('%s/relax/vaspinput/vasprun.xml' % dirname)
     struct = pmg.Structure.from_file('%s/relax/vaspinput/vasprun.xml' % dirname)
-    energies.append([dirname,struct.volume,run.final_energy])
+    en = str(run.final_energy)
+    en = en.replace(' eV', '')
+    en = float(en)
+    vol = struct.volume
+    vol = float(vol)
+    dirname = str(dirname)
+    #print(dirname,vol,en)
+    energies.append((dirname,vol,en))
+
+#print(energies.shape)
+#print(energies.index(min(energies[:][2])))
 np.save('energies.npy',energies)
 
-energ = []
 
-for i in np.load('energies.npy'):
-    i[2] = i[2].replace(' eV', '')
-    energ.append([i[0],i[1],float(i[2])])
+# In[59]:
 
-np.save('energies.npy',energ)
+
+E_list = [n[2] for n in energies]
+
+
+# In[60]:
+
+
+low_E = min(E_list)
+
+
+# In[61]:
+
+
+low_E_index = E_list.index(low_E)
+
+
+# In[63]:
+
+
+locate = energies[low_E_index][0]
+
+
+# In[64]:
+
+
+print('Lowest energy configuration is in '+str(locate)+' with an energy of '+str(low_E))
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
